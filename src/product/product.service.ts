@@ -12,15 +12,23 @@ export class ProductService {
 
   async findAll(query?: ProductQueryDto): Promise<[Product[], number]> {
     const t = query?.sort && JSON.parse(query.sort[0]);
+    const direction = t?.dir === 'asc' ? 'ASC' : 'DESC';
+    console.log('direction::', direction);
     console.log('T::', t?.field);
     console.log(query);
-    return await this.repository
-      .createQueryBuilder('products')
-      .skip(query.skip)
-      .take(query.take)
-      // .orderBy(query.field, query.direction)
-      .orderBy('products`.${t?.field}`', 'ASC')
-      .getManyAndCount();
+
+    return query?.sort
+      ? await this.repository
+          .createQueryBuilder('products')
+          .skip(query.skip)
+          .take(query.take)
+          .orderBy('products' + `.${t?.field}`, direction, 'NULLS LAST')
+          .getManyAndCount()
+      : await this.repository
+          .createQueryBuilder('products')
+          .skip(query.skip)
+          .take(query.take)
+          .getManyAndCount();
   }
 
   async queryBuilder(alias: string) {

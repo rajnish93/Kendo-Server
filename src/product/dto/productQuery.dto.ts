@@ -1,52 +1,8 @@
-import { ApiModelProperty, ApiModelPropertyOptional } from '@nestjs/swagger';
+import { ApiModelPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import {
-  IsArray,
-  IsDefined,
-  IsEnum,
-  IsNumber,
-  IsOptional,
-  IsString,
-  ValidateNested,
-} from 'class-validator';
-
-export enum Direction {
-  asc = 'ASC',
-  desc = 'DESC',
-}
-
-export class SortValidationDto {
-  @ApiModelProperty()
-  @IsDefined()
-  @IsString()
-  field: string;
-}
+import { IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class ProductQueryDto {
-  /* @ApiModelPropertyOptional({
-    description: 'Query all with id',
-  })
-  @IsString()
-  id?: string;
-
-  @ApiModelPropertyOptional({
-    description: 'Query all with ProductName',
-  })
-  @IsString()
-  ProductName?: string;
-
-  @ApiModelPropertyOptional({
-    description: 'Query all with description',
-  })
-  @IsString()
-  description?: string;
-
-  @ApiModelPropertyOptional({
-    description: 'Query all with price',
-  })
-  @IsNumber()
-  price?: number;
- */
   @ApiModelPropertyOptional({
     description: 'Query all with take',
   })
@@ -68,8 +24,6 @@ export class ProductQueryDto {
   })
   @IsOptional()
   @Type(() => String)
-  //   @IsString()
-  //   @ValidateNested({ each: true })
   sort?: string[];
 
   @ApiModelPropertyOptional({
@@ -84,15 +38,8 @@ export class ProductQueryDto {
     description: 'Query all with direction',
   })
   @IsOptional()
-  @IsEnum(Direction, { always: true })
-  dir: Direction;
-
-  /* @ApiModelPropertyOptional({
-    description: 'Query all with skip',
-  })
-  @IsOptional()
-  @IsNumber()
-  total?: number; */
+  @IsString()
+  dir?: string;
 }
 
 // take: dataState.take,

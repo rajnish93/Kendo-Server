@@ -14,6 +14,23 @@ export class SubSort {
   readonly dir: string;
 }
 
+export class SubFilters {
+  @ApiModelPropertyOptional({ type: String })
+  @IsOptional()
+  @IsString()
+  readonly field: string;
+
+  @ApiModelPropertyOptional({ type: String })
+  @IsOptional()
+  @IsString()
+  readonly operator: string;
+
+  @ApiModelPropertyOptional({ type: String })
+  @IsOptional()
+  @IsString()
+  readonly value: string;
+}
+
 export class ProductQueryDto {
   /* @ApiModelPropertyOptional({
     description: 'Query all with ProductName',
@@ -79,12 +96,10 @@ export class ProductQueryDto {
   @IsString()
   dir?: string;
  */
-  @ApiModelPropertyOptional({
-    description: 'Query all with filter',
-  })
+  @ApiModelPropertyOptional({ type: [SubFilters] })
   @IsOptional()
-  @Type(() => String)
-  filter?: string[];
+  @IsArray()
+  readonly filters: SubFilters[];
 }
 
 // take: dataState.take,

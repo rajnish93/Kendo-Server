@@ -15,6 +15,7 @@ export class ProductService {
     take,
     skip,
     sort,
+    filters,
   }: ProductQueryDto): Promise<[Product[], number]> {
     /*     const t = query?.sort && JSON.parse(query.sort[0]);
     const direction = t?.dir === 'asc' ? 'ASC' : 'DESC';
@@ -81,6 +82,81 @@ export class ProductService {
     if (sortObj) {
       builder.orderBy(`products.${field}`, direction, 'NULLS LAST');
     }
+    const filterObj = find(filters);
+    console.log(filterObj);
+    const operator = filterObj && filterObj['operator'];
+    const fieldFilter = filterObj && filterObj['field'];
+    console.log('Filter Operator:: ', operator);
+    const value = filterObj && filterObj['value'];
+    if (filterObj) {
+      switch (operator) {
+        case 'eq':
+          builder.where(`products."${fieldFilter}" = :s`, {
+            s: `${value}`,
+          });
+          break;
+        case 'neq':
+          builder.where(`products."${fieldFilter}" != :s`, {
+            s: `${value}`,
+          });
+          break;
+        case 'contains':
+          builder.where(`products."${fieldFilter}" ILike :s`, {
+            s: `%${value}%`,
+          });
+          break;
+        case 'doesnotcontain':
+          builder.where(`products."${fieldFilter}" NOT ILike :s`, {
+            s: `%${value}%`,
+          });
+          break;
+        case 'startswith':
+          builder.where(`products."${fieldFilter}" ILike :s`, {
+            s: `${value}%`,
+          });
+          break;
+        case 'endswith':
+          builder.where(`products."${fieldFilter}" ILike :s`, {
+            s: `%${value}`,
+          });
+          break;
+        case 'isnull':
+          builder.where(`products."${fieldFilter}" IS NULL`);
+          break;
+        case 'isnotnull':
+          builder.where(`products."${fieldFilter}" IS NOT NULL`);
+          break;
+        case 'isempty':
+          builder.where(`products."${fieldFilter}" =''`);
+          break;
+        case 'isnotempty':
+          builder.where(`products."${fieldFilter}" !=''`);
+          break;
+        case 'gte':
+          builder.where(`products."${fieldFilter}" >= :s`, {
+            s: `${value}`,
+          });
+          break;
+        case 'gt':
+          builder.where(`products."${fieldFilter}" > :s`, {
+            s: `${value}`,
+          });
+          break;
+        case 'lte':
+          builder.where(`products."${fieldFilter}" <= :s`, {
+            s: `${value}`,
+          });
+          break;
+        case 'lt':
+          builder.where(`products."${fieldFilter}" < :s`, {
+            s: `${value}`,
+          });
+          break;
+        default:
+          break;
+      }
+    }
+
     return await builder.getManyAndCount();
   }
 

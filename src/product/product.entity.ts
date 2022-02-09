@@ -18,4 +18,8 @@ export class Product extends BaseEntity {
   @Factory((faker) => randomInt(10, 100))
   @Column()
   price: number;
+
+  @Factory((faker) => faker.date.between('2021-01-01', '2022-01-31'))
+  @Column({ type: 'timestamptz', nullable: true })
+  dateTime: Date;
 }

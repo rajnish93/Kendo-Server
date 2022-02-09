@@ -17,7 +17,42 @@ export class ProductService {
     console.log('T::', t?.field);
     console.log(query);
 
-    return query?.sort
+    console.log('.....Search String.....');
+    const s = query?.filter?.map((ele) => JSON.parse(ele));
+    const field = query?.filter
+      ?.map((ele) => JSON.parse(ele))
+      .map((e) => e.field);
+    // console.log('field::', field);
+    // console.log(s?.map((e) => e.field));
+    const builderTest = this.repository.createQueryBuilder('products');
+    if (query?.filter) {
+      query?.filter
+        ?.map((ele) => JSON.parse(ele))
+        .map((e) => {
+          console.log('Column::', e.field);
+          switch (e.operator) {
+            case 'eq': {
+              builderTest.where('products' + `.${e.field} LIKE:s`, {
+                s: `%${e.value}%`,
+              });
+              break;
+            }
+            default: {
+              break;
+            }
+          }
+        });
+    }
+    if (query?.sort) {
+      builderTest
+        .skip(query.skip)
+        .take(query.take)
+        .orderBy('products' + `.${t?.field}`, direction, 'NULLS LAST');
+    }
+    if (query) {
+      builderTest.skip(query.skip).take(query.take);
+    }
+    /* return query?.sort
       ? await this.repository
           .createQueryBuilder('products')
           .skip(query.skip)
@@ -28,7 +63,9 @@ export class ProductService {
           .createQueryBuilder('products')
           .skip(query.skip)
           .take(query.take)
-          .getManyAndCount();
+          .getManyAndCount(); */
+
+    return await builderTest.getManyAndCount();
   }
 
   async queryBuilder(alias: string) {

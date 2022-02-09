@@ -4,6 +4,34 @@ import { IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class ProductQueryDto {
   @ApiModelPropertyOptional({
+    description: 'Query all with ProductName',
+  })
+  @IsOptional()
+  @Type(() => String)
+  @IsString()
+  ProductName?: string;
+
+  @ApiModelPropertyOptional({
+    description: 'Query all with description',
+  })
+  @IsOptional()
+  @Type(() => String)
+  @IsString()
+  description?: string;
+
+  @ApiModelPropertyOptional({
+    description: 'Query all with price',
+  })
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  price?: number;
+
+  @IsOptional()
+  @Type(() => Date)
+  dateTime: Date;
+
+  @ApiModelPropertyOptional({
     description: 'Query all with take',
   })
   @IsOptional()
@@ -40,6 +68,13 @@ export class ProductQueryDto {
   @IsOptional()
   @IsString()
   dir?: string;
+
+  @ApiModelPropertyOptional({
+    description: 'Query all with filter',
+  })
+  @IsOptional()
+  @Type(() => String)
+  filter?: string[];
 }
 
 // take: dataState.take,

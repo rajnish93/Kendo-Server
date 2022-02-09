@@ -1,9 +1,21 @@
 import { ApiModelPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsArray, IsNumber, IsOptional, IsString } from 'class-validator';
+
+export class SubSort {
+  @ApiModelPropertyOptional({ type: String })
+  @IsOptional()
+  @IsString()
+  readonly field: string;
+
+  @ApiModelPropertyOptional({ type: String })
+  @IsOptional()
+  @IsString()
+  readonly dir: string;
+}
 
 export class ProductQueryDto {
-  @ApiModelPropertyOptional({
+  /* @ApiModelPropertyOptional({
     description: 'Query all with ProductName',
   })
   @IsOptional()
@@ -30,7 +42,7 @@ export class ProductQueryDto {
   @IsOptional()
   @Type(() => Date)
   dateTime: Date;
-
+ */
   @ApiModelPropertyOptional({
     description: 'Query all with take',
   })
@@ -47,14 +59,12 @@ export class ProductQueryDto {
   @IsNumber()
   skip?: number;
 
-  @ApiModelPropertyOptional({
-    description: 'Query all with sort',
-  })
+  @ApiModelPropertyOptional({ type: [SubSort] })
   @IsOptional()
-  @Type(() => String)
-  sort?: string[];
+  @IsArray()
+  readonly sort: SubSort[];
 
-  @ApiModelPropertyOptional({
+  /* @ApiModelPropertyOptional({
     description: 'Query all with field',
   })
   @IsOptional()
@@ -68,7 +78,7 @@ export class ProductQueryDto {
   @IsOptional()
   @IsString()
   dir?: string;
-
+ */
   @ApiModelPropertyOptional({
     description: 'Query all with filter',
   })

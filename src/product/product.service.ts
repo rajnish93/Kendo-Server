@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { find } from 'lodash';
 import { Repository } from 'typeorm';
 import { ProductQueryDto } from './dto/productQuery.dto';
 import { Product } from './product.entity';
@@ -10,8 +11,12 @@ export class ProductService {
     @InjectRepository(Product) private readonly repository: Repository<Product>,
   ) {}
 
-  async findAll(query?: ProductQueryDto): Promise<[Product[], number]> {
-    const t = query?.sort && JSON.parse(query.sort[0]);
+  async findAll({
+    take,
+    skip,
+    sort,
+  }: ProductQueryDto): Promise<[Product[], number]> {
+    /*     const t = query?.sort && JSON.parse(query.sort[0]);
     const direction = t?.dir === 'asc' ? 'ASC' : 'DESC';
     console.log('direction::', direction);
     console.log('T::', t?.field);
@@ -21,10 +26,10 @@ export class ProductService {
     const s = query?.filter?.map((ele) => JSON.parse(ele));
     const field = query?.filter
       ?.map((ele) => JSON.parse(ele))
-      .map((e) => e.field);
+      .map((e) => e.field); */
     // console.log('field::', field);
     // console.log(s?.map((e) => e.field));
-    const builderTest = this.repository.createQueryBuilder('products');
+    /*     const builderTest = this.repository.createQueryBuilder('products');
     if (query?.filter) {
       query?.filter
         ?.map((ele) => JSON.parse(ele))
@@ -51,7 +56,7 @@ export class ProductService {
     }
     if (query) {
       builderTest.skip(query.skip).take(query.take);
-    }
+    } */
     /* return query?.sort
       ? await this.repository
           .createQueryBuilder('products')
@@ -65,7 +70,18 @@ export class ProductService {
           .take(query.take)
           .getManyAndCount(); */
 
-    return await builderTest.getManyAndCount();
+    const builder = this.repository
+      .createQueryBuilder('products')
+      .skip(skip)
+      .take(take);
+    const sortObj = find(sort, 'dir');
+    const field = sortObj && sortObj['field'];
+    const dir = sortObj && sortObj['dir'];
+    const direction = dir === 'asc' ? 'ASC' : 'DESC';
+    if (sortObj) {
+      builder.orderBy(`products.${field}`, direction, 'NULLS LAST');
+    }
+    return await builder.getManyAndCount();
   }
 
   async queryBuilder(alias: string) {

@@ -1,4 +1,4 @@
-import { Controller, Get, Query, Req } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, Req } from '@nestjs/common';
 import { ProductService } from './product.service';
 import { Request } from 'express';
 import { get } from 'lodash';
@@ -14,9 +14,9 @@ export class ProductController {
   // async findAll() {
   //   return this.productService.findAll();
   // }
-  @Get()
+  @Post()
   async findAll(
-    @Query() queryParams: ProductQueryDto,
+    @Body() queryParams: ProductQueryDto,
   ): Promise<[Product[], number]> {
     return this.productService.findAll(queryParams);
   }
